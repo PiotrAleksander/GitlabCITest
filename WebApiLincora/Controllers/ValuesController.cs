@@ -38,18 +38,18 @@ namespace WebApiLincora.Controllers
             return BadRequest();
         }
 
-        // POST: mqtt/superuser
-        [HttpPost]
-        [Route("mqtt/superuser")]
-        public IActionResult PostMqttSuperuser(string clientid, string username)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //// POST: mqtt/superuser
+        //[HttpPost]
+        //[Route("mqtt/superuser")]
+        //public IActionResult PostMqttSuperuser(string clientid, string username)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         // GET: mqtt/acl
         [HttpGet]
