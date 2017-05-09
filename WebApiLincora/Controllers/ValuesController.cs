@@ -5,17 +5,31 @@ using StackExchange.Redis;
 
 namespace WebApiLincora.Controllers
 {
-    public class ValuesController : Controller
+    public class ValuesController : Controller, IMqttAuthorizationStorage
     {
-        public static IDatabase cache;
+        private static IDatabase cache;
+        private static ISubscriber publisher;
+        private static TopicsMatchingHelper helper;
+
+        public static TopicsMatchingHelper Helper { get => helper; set => helper = value; }
+        public static ISubscriber Publisher { get => publisher; set => publisher = value; }
+        public static IDatabase Cache { get => cache; set => cache = value; }
 
         public ValuesController()
         {
-            cache = RedisConnectorHelper.Connection.GetDatabase();
-            cache.StringSet("driverRouter", "sadasdqwe");
-            cache.StringSet("driver", "1qaz!QAZ");
-            cache.StringSet("542982025331250", "public");
-            cache.StringSet("dispatcherClient", "dispatcherclient");
+            Cache = RedisConnectorHelper.Connection.GetDatabase();
+            Publisher = RedisConnectorHelper.Connection.GetSubscriber();
+            Helper = new TopicsMatchingHelper();
+            Cache.StringSet("connector", "1qaz!QAZ");
+            Publisher.Publish("users", "connector");
+            Cache.StringSet("driverRouter", "sadasdqwe");
+            Publisher.Publish("users", "driverRouter");
+            Cache.StringSet("ac_emu", "1qaz!QAZ");
+            Publisher.Publish("users", "ac_emu");
+            Cache.StringSet("ac_emu:542982025331250", "public");
+            Publisher.Publish("users", "ac_emu:542982025331250");
+            Cache.StringSet("dashboard", "dispatcherclient");
+            Publisher.Publish("users", "dashboard");
         }
 
         // POST: mqtt/auth
@@ -27,10 +41,8 @@ namespace WebApiLincora.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var pass = cache.StringGet(clientid);
-
-            if (pass == password)
+            
+            if (Cache.StringGet(username) == password)
             {
                 return Ok();
             }
@@ -61,7 +73,12 @@ namespace WebApiLincora.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok();
+            if (Helper.IsTopicAllowed(topic, access))
+            {
+                return Ok();
+            }
+
+            return BadRequest();
         }
 
         // GET api/values
