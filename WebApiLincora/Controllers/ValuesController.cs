@@ -10,26 +10,26 @@ namespace WebApiLincora.Controllers
         private static IDatabase cache;
         private static ISubscriber publisher;
         private static TopicsMatchingHelper helper;
+        private static string[] subscriptionTopics;
+        private static string[] publishingTopics;
 
         public static TopicsMatchingHelper Helper { get => helper; set => helper = value; }
         public static ISubscriber Publisher { get => publisher; set => publisher = value; }
         public static IDatabase Cache { get => cache; set => cache = value; }
-
+        public static string[] SubscriptionTopics { get => subscriptionTopics; set => subscriptionTopics = value; }
+        public static string[] PublicationTopics { get => publishingTopics; set => publishingTopics = value; }
+        
         public ValuesController()
         {
-            Cache = RedisConnectorHelper.Connection.GetDatabase();
+            Cache = RedisConnectorHelper.Cache;
             Publisher = RedisConnectorHelper.Connection.GetSubscriber();
-            Helper = new TopicsMatchingHelper();
-            Cache.StringSet("connector", "1qaz!QAZ");
-            Publisher.Publish("users", "connector");
-            Cache.StringSet("driverRouter", "sadasdqwe");
-            Publisher.Publish("users", "driverRouter");
-            Cache.StringSet("ac_emu", "1qaz!QAZ");
-            Publisher.Publish("users", "ac_emu");
-            Cache.StringSet("ac_emu:542982025331250", "public");
-            Publisher.Publish("users", "ac_emu:542982025331250");
-            Cache.StringSet("dashboard", "dispatcherclient");
-            Publisher.Publish("users", "dashboard");
+            Helper = new TopicsMatchingHelper(RedisConnectorHelper.SubscriptionTopics,
+                RedisConnectorHelper.PublicationTopics);
+        }
+
+        public IDatabase GetCache()
+        {
+            return RedisConnectorHelper.Cache;
         }
 
         // POST: mqtt/auth

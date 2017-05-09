@@ -5,31 +5,18 @@
     /// </summary>
     public class TopicsMatchingHelper
     {
-        public static string[] _topicsToSubscribe = new string[] {
-            "dev/{variable}/commands/+",
-            "dev/+/events/+",
-            "sys/+/commands/+",
-            "dev/+/replies/+/+",
-            "drv/{model]/+/replies/+/+",
-            "drv/{variable}/+/events/+",
-            "drv/{variable}/+/replies/+/+",
-            "sys/+/events/+",
-            "sys/+commands/+",
-            "sys/+/replies/+/+"
-        };
+        private static string[] topicsToSubscribe;
 
-        public static string[] _topicsToPublish = new string[]
+        private static string[] topicsToPublish;
+
+        public static string[] TopicsToSubscribe { get => topicsToSubscribe; set => topicsToSubscribe = value; }
+        public static string[] TopicsToPublish { get => topicsToPublish; set => topicsToPublish = value; }
+
+        public TopicsMatchingHelper(string[] SubscriptionTopics, string[] PublishingTopics)
         {
-            "dev/{variable}/replies/{variable}/{variable}",
-            "dev/{variable}/events/{variable}",
-            "drv/{variable}/{variable}/events/{variable}",
-            "drv/{variable}/{variable}/commands/{variable}",
-            "dev/{variable}/commands/{variable}",
-            "sys/{variable}/replies/{variable}/{variable}",
-            "sys/{variable}/events/{variable}",
-            "sys/{variable}/commands/{variable}"
-        };
-
+            TopicsToSubscribe = SubscriptionTopics;
+            TopicsToPublish = PublishingTopics;
+        }
 
         /// <summary>
         /// Validates provided topic syntax
@@ -42,10 +29,10 @@
 
             if (AccessType == 1)
             {
-                topics = _topicsToSubscribe;
+                topics = TopicsToSubscribe;
             } else
             {
-                topics = _topicsToPublish;
+                topics = TopicsToPublish;
             }
 
             foreach (var topic in topics)

@@ -5,7 +5,7 @@ namespace WebApiTests
 {
     public class UnitTest1
     {
-        public static TopicsMatchingHelper helper = new TopicsMatchingHelper();
+        public static TopicsMatchingHelper helper = new TopicsMatchingHelper(RedisConnectorHelper.SubscriptionTopics, RedisConnectorHelper.PublicationTopics);
 
         [Fact]
         public void SameTopicsMatchingTest()
