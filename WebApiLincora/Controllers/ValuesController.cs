@@ -10,21 +10,28 @@ namespace WebApiLincora.Controllers
         private static IDatabase cache;
         private static ISubscriber publisher;
         private static TopicsMatchingHelper helper;
+        private static RiakConnectorHelper riakConnectorHelper = new RiakConnectorHelper("riak", "172.16.40.121");
         private static string[] subscriptionTopics;
         private static string[] publishingTopics;
+        private object users;
 
         public static TopicsMatchingHelper Helper { get => helper; set => helper = value; }
         public static ISubscriber Publisher { get => publisher; set => publisher = value; }
         public static IDatabase Cache { get => cache; set => cache = value; }
+        public static RiakConnectorHelper RiakConnectorHelper { get => riakConnectorHelper; set => riakConnectorHelper = value; }
         public static string[] SubscriptionTopics { get => subscriptionTopics; set => subscriptionTopics = value; }
         public static string[] PublicationTopics { get => publishingTopics; set => publishingTopics = value; }
-        
+        public object Users { get => users; set => users = value; }
+
         public ValuesController()
         {
+            var saver = new RiakSaver();
+            var reader = new RiakTelemetryStore();
             Cache = RedisConnectorHelper.Cache;
             Publisher = RedisConnectorHelper.Connection.GetSubscriber();
             Helper = new TopicsMatchingHelper(RedisConnectorHelper.SubscriptionTopics,
                 RedisConnectorHelper.PublicationTopics);
+            Users = riakConnectorHelper.Query("Users", "select * from Users");
         }
 
         public IDatabase GetCache()

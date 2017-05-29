@@ -5,10 +5,10 @@
     /// </summary>
     public interface IConnectorHelper
     {
-        void AddUser(string username, string password);
-        void RemoveUser(string username);
-        void ChangePassword(string username, string password, string newpassword);
-        void AddSubscriptionTopics(string topic);
-        void AddPublicationTopics(string topic);
+        bool AddUser(string username, string password);
+        bool RemoveUser(string username);
+        bool ChangePassword(string username, string password, string newpassword);
+        bool AddSubscriptionTopics(string topic);
+        bool AddPublicationTopics(string topic);
     }
 }

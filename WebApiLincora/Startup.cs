@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebApiLincora.Controllers;
 
 namespace WebApiLincora
 {
@@ -20,6 +21,8 @@ namespace WebApiLincora
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            var saver = new RiakSaver();
+            var reader = new RiakTelemetryStore();
         }
 
         public IConfigurationRoot Configuration { get; }
